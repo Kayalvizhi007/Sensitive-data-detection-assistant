@@ -103,5 +103,5 @@ Indexing Core: Vector graphs are loaded into an in-memory FAISS layout cache hos
 **Encrypted Enterprise Event Vaults**: Transition native audit logging pipelines from basic CSV outputs into securely encrypted database storage engines optimized for high-volume enterprise environments.
 
 ## Working Prototype Deployment Link : 
-👉 Live Application Link: https://sensitive-data-detection-assistant-y8mwwwwkbxvwpq7dqi25tn.streamlit.app/
+👉 Live Application Link: https://sensitive-data-detection-assistant-y8mwwvwkbxvwpq7dqi25tn.streamlit.app/
   
