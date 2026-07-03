@@ -58,7 +58,7 @@ GOOGLE_API_KEY=your_google_gemini_api_key_here
 Bash
 streamlit run app.py
 
-## AI/ML Approach Used (MANDATORY)
+## AI/ML Approach Used 
 1. Hybrid Token Detection Strategy
     To maximize compute efficiency and maintain 100% processing reliability, structured identifiers are parsed deterministically via compiled regular expressions rather than using LLM tokens. The language model is completely insulated from basic text parsing and is reserved exclusively for complex semantic summaries and contextual risk analysis.
 
