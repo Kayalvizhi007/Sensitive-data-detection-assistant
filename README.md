@@ -34,70 +34,74 @@ Sensitive-Data-Assistant/
 
 ## Setup
 
-```bash
+1. Initialize and Activate Virtual Environment
+Bash
 python -m venv venv
-venv\Scripts\activate
+# On Windows:
+.\venv\Scripts\activate
+# On Mac/Linux:
+source venv/bin/activate
+
+2. Install Dependencies
+Bash
 pip install -r requirements.txt
-copy .env.example .env
-streamlit run app.py
-```
 
-Add a Gemini key in `.env`:
+4. Environment Configuration
+Create a .env file in your root folder and add your API key configuration:
 
-```env
+Plaintext
 GOOGLE_API_KEY=your_google_gemini_api_key_here
-```
+# OpenAI is fully supported as an alternative runtime fallback option:
+# OPENAI_API_KEY=your_openai_api_key_here
 
-OpenAI is also supported with `OPENAI_API_KEY` when Gemini is not configured.
+4. Run the Infrastructure
+Bash
+streamlit run app.py
 
-## Detection Strategy
+## AI/ML Approach Used (MANDATORY)
+1. Hybrid Token Detection Strategy
+    To maximize compute efficiency and maintain 100% processing reliability, structured identifiers are parsed deterministically via compiled regular expressions rather than using LLM tokens. The language model is completely insulated from basic text parsing and is reserved exclusively for complex semantic summaries and contextual risk analysis.
 
-Structured identifiers are detected with compiled regular expressions, not an LLM:
+Regex Identifiers: Aadhaar, PAN, Email, Phone, Credit Card, Bank Account, API Keys, Passwords, Employee IDs.
 
-- Aadhaar
-- PAN
-- Email
-- Phone
-- Credit Card
-- Bank Account
-- API Keys
-- Passwords
-- Employee IDs
+LLM Analysis: The LLM is used only for compliance summaries and unstructured context reviews, such as corporate trade secrets, confidential business information, and internal sensitive contexts.
 
-The LLM is used only for compliance summaries and unstructured context review such as confidential business information, trade secrets, and internal sensitive context.
+2. Weighted Compliance Risk Assessment Engine
+Identified items flow into a mathematical risk scoring rubric based on categorical severity weights:
 
-## Risk Engine
+Weight 5 (Critical Exposure): API Key, Password, Credit Card, Bank Account
 
-Weighted scoring:
+Weight 4 (High Exposure): Aadhaar
 
-- API Key, Password, Credit Card, Bank Account: 5
-- Aadhaar: 4
-- PAN: 3
-- Employee ID: 2
-- Phone, Email: 1
+Weight 3 (Medium Exposure): PAN
 
-High risk is assigned for any API key, any credit card, score above 10, or more than five sensitive items. Medium risk is score 4 to 10. Low risk is below 4.
+Weight 2 (Low Exposure): Employee ID
 
-## RAG Workflow
+Weight 1 (Informational): Phone, Email
 
-The uploaded document is split with `RecursiveCharacterTextSplitter`, embedded using Gemini or OpenAI embeddings, indexed in FAISS, and queried through a retriever-backed LLM prompt. The vector database is stored in Streamlit session state so tab switching does not rebuild it.
+Threshold Rules: High risk is assigned if any API key or credit card is found, if the aggregate score matches/exceeds 10, or if more than five sensitive items are isolated. Medium risk ranges from scores 4 to 10. Low risk is for any total below 4.
 
-## Bonus Features
+3. State-Optimized RAG Architecture
+Chunking Engine: Extracted text objects are separated utilizing a RecursiveCharacterTextSplitter algorithm.
 
-- Retrieval-Augmented Generation
-- Data Masking / Redaction
-- Audit Logging
+Embedding Layer: Vectors are modeled against specialized generative arrays using GoogleAIEmbeddings or OpenAIEmbeddings.
 
-## Error Handling
-
-The app handles unsupported formats, empty files, corrupted PDFs, missing API keys, LLM failures, embedding failures, and vector store failures with user-friendly Streamlit messages. Audit logs are written to `logs/audit_log.csv`.
+Indexing Core: Vector graphs are loaded into an in-memory FAISS layout cache hosted directly inside Streamlit's global state memory pool (st.session_state), preventing unnecessary reprocessing during user interactions.
 
 ## Challenges
 
-Balancing deterministic detection with LLM assistance is important. Regex is reliable for structured identifiers, while the LLM is reserved for narrative compliance reasoning and contextual sensitivity.
+- Balancing Deterministic Detection with LLM Autonomy: Relying entirely on LLMs to discover raw strings introduces execution overhead, random latency spikes, and tracking risks.
+
+- Mitigation: Engineered a strict pipeline separation—employing optimized regex architectures for literal validations while limiting foundation model interactions to high-level compliance auditing, narrative generation, and document Q&A tracking.
 
 ## Future Improvements
 
-- Add automated tests for regex detection and risk scoring.
-- Add role-based access control around uploaded document review.
-- Add secure encrypted storage for audit events in enterprise deployments.
+**Automated Regression Frameworks**: Introduce comprehensive unit testing arrays (pytest) to validate regex stability and verify risk grading bounds across diverse data profiles.
+
+**Role-Based Access Control (RBAC)**: Build standard security protocols to restrict document evaluation and system log privileges based on authenticated user roles.
+
+**Encrypted Enterprise Event Vaults**: Transition native audit logging pipelines from basic CSV outputs into securely encrypted database storage engines optimized for high-volume enterprise environments.
+
+## Working Prototype Deployment Link : 
+👉 Live Application Link: https://sensitive-data-detection-assistant-y8mwwwwkbxvwpq7dqi25tn.streamlit.app/
+  
